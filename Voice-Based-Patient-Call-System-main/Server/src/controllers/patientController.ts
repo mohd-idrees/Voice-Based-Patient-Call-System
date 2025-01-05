@@ -10,7 +10,7 @@ export const registerPatient = async (req: Request, res: Response) => {
       email,
       password,
       medicalHistory,
-      emergencyContact,
+      emergencyContact
     } = req.body;
 
     // Check if user exists
@@ -18,7 +18,7 @@ export const registerPatient = async (req: Request, res: Response) => {
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: 'Email already registered',
+        message: 'Email already registered'
       });
     }
 
@@ -29,14 +29,14 @@ export const registerPatient = async (req: Request, res: Response) => {
       email,
       password,
       role: 'patient',
-      status: 'approved',
+      status: 'approved'
     });
 
     // Create patient profile
     const patient = await Patient.create({
       user: user._id,
       medicalHistory,
-      emergencyContact,
+      emergencyContact
     });
 
     res.status(201).json({
@@ -46,17 +46,16 @@ export const registerPatient = async (req: Request, res: Response) => {
           _id: user._id,
           fullName: user.fullName,
           email: user.email,
-          role: user.role,
+          role: user.role
         },
-        patient,
-      },
+        patient
+      }
     });
   } catch (error) {
     console.error('Error registering patient:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to register patient',
-      error: error instanceof Error ? error.message : 'Unknown error',
+      message: 'Failed to register patient'
     });
   }
 };
@@ -66,47 +65,45 @@ export const getPatients = async (req: Request, res: Response) => {
     const patients = await Patient.find({});
     res.json({
       success: true,
-      data: patients,
+      data: patients
     });
   } catch (error) {
-    console.error('Error fetching patients:', error);
     res.status(500).json({
       success: false,
       message: 'Error fetching patients',
-      error: error instanceof Error ? error.message : 'Unknown error',
+      
     });
   }
 };
 
 export const getPatientById = async (req: Request, res: Response) => {
   try {
-    const patient = await User.findOne({
+    const patient = await User.findOne({ 
       _id: req.params.id,
-      role: 'patient',
+      role: 'patient'
     })
       .select('-password')
       .populate({
         path: 'patient',
-        select: 'medicalHistory emergencyContact',
+        select: 'medicalHistory emergencyContact'
       });
 
     if (!patient) {
       return res.status(404).json({
         success: false,
-        message: 'Patient not found',
+        message: 'Patient not found'
       });
     }
 
     res.json({
       success: true,
-      data: patient,
+      data: patient
     });
   } catch (error) {
     console.error('Error fetching patient:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch patient',
-      error: error instanceof Error ? error.message : 'Unknown error',
+      message: 'Failed to fetch patient'
     });
   }
-};
+}; 
